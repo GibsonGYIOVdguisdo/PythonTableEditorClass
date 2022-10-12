@@ -1,4 +1,3 @@
-
 record=""
 table1={}
 f = open("table.csv", "r")
@@ -6,6 +5,7 @@ asdas=f.readlines()
 f.close()
 fields=[]
 _cur=""
+pos=0
 for i in asdas[0]:
   if i == "," or i=="\n":
     table1[_cur.strip()]=[]
@@ -13,6 +13,7 @@ for i in asdas[0]:
     _cur=""
   else:
     _cur=_cur+i
+  pos+=1
 
 index=0
 for i in asdas[1:len(asdas)]:
@@ -25,7 +26,6 @@ for i in asdas[1:len(asdas)]:
       table1[fields[index]].append(_cur.strip())
       _cur=""
       index=index+1
-    
     pos+=1
 
 
@@ -80,7 +80,6 @@ while True:
     if record in table1["uid"]:
       index213=table1["uid"].index(record)
       for i in table1:
-        print(table1[i][index213])
         table1[i].pop(index213)
     else:
       print("record not found")
