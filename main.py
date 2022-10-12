@@ -87,7 +87,7 @@ while True:
       for i in table1:
         table1[i].append("empty")
   elif Option == "read":
-    Option = input("What record would you like (enter uid or type all): ")
+    Option = input("What records would you like?: ")
     record = ""
     if Option == "all":
       for i in table1:
@@ -114,7 +114,7 @@ while True:
         print("Record not found")
           
   elif Option == "Update":
-    records=FindItem2(input("What records?: "),table1)
+    records=FindItem2(input("What records would you like to update?: "),table1)
     if records==[]:
       print("No records found")
     elif records==1:
