@@ -113,7 +113,7 @@ while True:
       else:
         print("Record not found")
           
-  elif Option == "Update":
+  elif Option == "update":
     records=FindItem2(input("What records would you like to update?: "),table1)
     if records==[]:
       print("No records found")
@@ -121,7 +121,7 @@ while True:
       print("Invalid syntax")
     else:
       field = input("What field would you like to update?: ")
-      UpdateValue=input("What woud you like to set it to?: ")
+      UpdateValue=input("What would you like to set it to?: ")
       if field in table1:
         for i in records:
           table1[field][i] = UpdateValue
