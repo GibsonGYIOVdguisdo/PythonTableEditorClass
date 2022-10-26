@@ -1,235 +1,108 @@
-def FindItem2(find, table):
-  _thing = {}
-  _thing2 = {}
-  _cur = ""
-  _pos = 0
-  _last = ""
-  if ":" not in find:
-    return (1)
-  for i in find:
-    if i == ":":
-      _last = _cur
-      _thing[_cur] = []
-      _cur = ""
-    elif i == ",":
-      _thing[_last].append(_cur)
-      _cur = ""
-    elif _pos == len(find) - 1:
-      _cur += i
-      _thing[_last].append(_cur)
-      _cur = ""
-    else:
-      _cur = _cur + i
-    _pos += 1
-  for i in _thing:
-    if i not in table:
-      return ([])
-    _thing2[i] = []
-  INDEXES = []
-  NeedIndexes = []
-  for field in _thing:
-    for value in _thing[field]:
-      _pos = 0
-      for value2 in table[field]:
-        if value2 == value:
-          INDEXES.append(_pos)
-        _pos += 1
-  for i in INDEXES:
-    if INDEXES.count(i) >= len(_thing):
-      if i not in NeedIndexes:
-        NeedIndexes.append(i)
-  return (NeedIndexes)
+class table():
+    table_count=0
+    def __init__(self, data):
+        self.data=data
+        table.table_count+=1
+    @classmethod #Alternative constructor
+    def from_csv(cls, filename):
+        data={}
+        f=open(filename+".csv","r")
+        lines=f.readlines()
+        f.close()
+        found=True
+        fields=lines[0].split(",")
+        for i in fields:
+            i=i.replace("\n","")
+            data[i]=[]
+        for i in lines[1:]:
+            i=i.replace("\n","")
+            records=i.split(",")
+            for z,x in zip(data,records):
+                data[z].append(x)
+        return cls(data)
+    
+    def add_uid_field(self):
+        self.data["UID"]=[]
+        for i in range(0,len(self.data[str(list(self.data.keys())[0])])):
+            self.data["UID"].append(str(i))
 
+    def del_uid_field(self):
+        del self.data["UID"]
 
-def FindItem3(list):  #Currently unused
-  pos = 0
-  cur = 0
-  list2 = []
-  for i in list:
-    if pos == len(list) - 1:
-      list2.append(cur + i)
-      cur = ""
-    elif i == ",":
-      list2.append(cur)
-      cur = ""
-    else:
-      cur += i
-    pos += 1
-  return (list2)
-
-
-while True:
-  SelectedTable = "None"
-  Option = input(
-    "Would you like to create a new table or open an existing one (new or old)?: "
-  ).lower()
-  if Option == "new":
-    SelectedTable = input("What do you want the table name to be?: ")
-    SelectedTable = "tables/" + SelectedTable + ".csv"
-    try:
-      f = open(SelectedTable, "x")
-
-    except:
-      SelectedTable = "None"
-      print("That file already exists!")
-    if SelectedTable != "None":
-      f.write(
-        input(
-          "What would you like your field names to be? (seperated by commas): "
-        ) + "\n")
-      f.close()
-  elif Option == "old":
-    SelectedTable = "tables/" + input(
-      "What is the name of the file you want to open?: ") + ".csv"
-    try:
-      f = open(SelectedTable, "r")
-      f.close()
-    except:
-      SelectedTable = "None"
-      print("That file doesnt exists.")
-  if SelectedTable != "None":
-    f = open(SelectedTable, "r")
-    record = ""
-    table1 = {}
-    asdas = f.readlines()
-    f.close()
-    fields = []
-    _cur = ""
-    pos = 0
-    for i in asdas[0]:
-      if i == "," or i == "\n":
-        table1[_cur.strip()] = []
-        fields.append(_cur.strip())
-        _cur = ""
-      else:
-        _cur = _cur + i
-      pos += 1
-
-    index = 0
-    for i in asdas[1:len(asdas)]:
-      index = 0
-      pos = 0
-      for x in i:
-        if x != ",":
-          _cur = _cur + x
-        if x == "," or pos == len(i) - 1:
-          table1[fields[index]].append(_cur.strip())
-          _cur = ""
-          index = index + 1
-        pos += 1
-
-  while SelectedTable != "None":
-    Option = input("What would you like to do?: ").lower()
-    if Option == "create":
-      Option = input("Field or record?: ").lower()
-      if Option == "record":
-        print("New record created")
-        if "uid" in table1:
-          for i in table1:
-            if i == "uid":
-              newuid = str(len(table1["uid"]))
-              while newuid in table1["uid"]:
-                newuid = str(int(newuid) + 1)
-              table1[i].append(newuid)
-              continue
-            table1[i].append("empty")
+    def add_record(self,record):
+        if len(self.data)!=len(record):
+            raise ValueError(f"Invalid data inputed as record! Table has {len(self.data)} fields but {len(record)} values where assigned!")
         else:
-          for i in table1:
-            table1[i].append("empty")
-      elif Option == "field":
-        FieldName = input("What would you like the field name to be?: ")
-        if "," in FieldName:
-          print("You can't have a comma in the name")
+            for key,value in zip(self.data,record):
+                self.data[key].append(value)
+
+
+    def add_field(self, field_name):
+        self.data[field_name]=[]
+        for i in range(0,len(self.data[str(list(self.data.keys())[0])])):
+            self.data[field_name].append("")
+
+    def save_to_csv(self, file_name, fill_empty_vals=True):
+        data_to_write=""
+        for i in self.data:
+            data_to_write+=f"{i},"
+        data_to_write=data_to_write[:-1]+"\n"
+        for i in range(0,len(self.data[str(list(self.data.keys())[0])])):
+            for key in self.data:
+                if self.data[key][i]=="":
+                    if fill_empty_vals==True:
+                        data_to_write=data_to_write+"EmptyVal,"
+                else:
+                    data_to_write=data_to_write+f"{self.data[key][i]},"
+            data_to_write=data_to_write[:-1]+"\n"
+        data_to_write=data_to_write[:-1]
+        
+        try:
+            f=open(file_name,"x")
+        except:
+            f=open(file_name,"w")
+        finally:
+            f.write(data_to_write)
+            f.close()
+
+            
+    def edit_field_name(self, old_field_name,new_field_name):
+        self.data[new_field_name]=self.data.pop(old_field_name)
+    def edit_record(self, record_index, field_name, new_value):
+        if field_name in self.data:
+            if len(self.data[str(list(self.data.keys())[0])])>=record_index:
+                self.data[field_name][record_index]=new_value
+            else:
+                raise IndexError("The entered index is not in the table!")
         else:
-          table1[FieldName] = []
-          for i in table1[list(table1.keys())[0]]:
-            table1[FieldName].append("empty")
+            raise KeyError("The entered field is not in the table!")
 
-    elif Option == "read":
-      Option = input("What records would you like?: ")
-      record = ""
-      if Option == "all":
-        for i in table1:
-          record = record + " " + i
-        print(record)
-        for x in range(0, len(table1[list(table1.keys())[0]])):
-          record = ""
-          for i in table1:
-            record = record + " " + str(table1[i][x])
-          print(record)
-      else:
-        Indexes = FindItem2(Option, table1)
-        if Indexes == 1:
-          print("Invalid syntax")
-        elif Indexes != []:
-          for i in table1:
-            record = record + " " + i
-          for i in Indexes:
-            record += "\n"
-            for x in table1:
-              record += table1[x][i] + " "
-          print(record)
+    def del_field(self,field_name):
+        if field_name in self.data:
+            del self.data[field_name]
         else:
-          print("Record not found")
+            raise KeyError("The entered field is not in the table!")
+    def del_record(self, record_index):
+        if len(self.data[str(list(self.data.keys())[0])])>=record_index:
+            for key in self.data:
+                del self.data[key][record_index]
+        else:
+            raise IndexError("The entered index is not in the table!")
 
-    elif Option == "update":
-      records = FindItem2(input("What records would you like to update?: "),
-                          table1)
-      if records == []:
-        print("No records found")
-      elif records == 1:
-        print("Invalid syntax")
-      else:
-        field = input("What field would you like to update?: ")
-        UpdateValue = input("What would you like to set it to?: ")
-        if field in table1:
-          for i in records:
-            table1[field][i] = UpdateValue
-    elif Option == "delete":
-      userInput = input("What records do you want to delete?: ")
-      DelRecords = FindItem2(userInput, table1)
-      if DelRecords == []:
-        print("No records found")
-      elif DelRecords == 1:
-        print("Invalid syntax")
-      else:
-        while DelRecords != []:
-          for i in table1:
-            del table1[i][DelRecords[0]]
-          DelRecords = FindItem2(userInput, table1)
-    elif Option == "help":
-      print("create: creates a new record")
-      print("read: reads a record or all records")
-      print("update: updates a record")
-      print("delete: deletes a record")
-      print("help: shows this menu")
-      print("exit: exits table")
-    elif Option == "exit":
-      SelectedTable = "None"
-      continue
-    else:
-      print("Command not found")
-
-    f = open("table.csv", "w")
-    save = ""
-    index = 0
-    for i in table1:
-      if index == len(table1) - 1:
-        save = save + i + "\n"
-      else:
-        save = save + i + ","
-        index += 1
-
-    index1 = 0
-    for i in table1[list(table1.keys())[0]]:
-      index2 = 0
-      for x in table1:
-        save += table1[x][index1]
-        if index2 != len(table1) - 1:
-          save += ","
-        index2 += 1
-      if index1 != len(table1[list(table1.keys())[0]]) - 1:
-        save += "\n"
-      index1 += 1
-    f.write(save)
-    f.close()
+    def __str__(self):
+        records="{:<8}".format("index ")
+        for i in self.data:
+            records+="{:<8}".format(f"{i} ")
+        records+="\n"
+        for index in range(0,len(self.data[str(list(self.data.keys())[0])])):
+            records+="{:<8}".format(f"{index} ")
+            for key in self.data:
+                if self.data[key][index]=="":
+                    records+="{:<8}".format("\"\"")
+                else:
+                    records+="{:<8}".format(f"{self.data[key][index]} ")
+            records+="\n"
+        records=records[:-1]
+        return(records)
+    def __repr__(self):
+        return(f"table({str(self.data)})")
