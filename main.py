@@ -6,7 +6,12 @@ class table():
     @classmethod #Alternative constructor
     def from_csv(cls, filename):
         data={}
-        f=open(filename+".csv","r")
+        split=filename.split(".")
+        if len(split)==2:
+            if e[1]=="csv":
+                f=open(filename,"r")
+        else:
+            f=open("{}.csv".format(filename),"r")
         lines=f.readlines()
         f.close()
         found=True
@@ -20,23 +25,18 @@ class table():
             for z,x in zip(data,records):
                 data[z].append(x)
         return cls(data)
-    
     def add_uid_field(self):
         self.data["UID"]=[]
         for i in range(0,len(self.data[str(list(self.data.keys())[0])])):
             self.data["UID"].append(str(i))
-
     def del_uid_field(self):
         del self.data["UID"]
-
     def add_record(self,record):
         if len(self.data)!=len(record):
             raise ValueError(f"Invalid data inputed as record! Table has {len(self.data)} fields but {len(record)} values where assigned!")
         else:
             for key,value in zip(self.data,record):
                 self.data[key].append(value)
-
-
     def add_field(self, field_name):
         self.data[field_name]=[]
         for i in range(0,len(self.data[str(list(self.data.keys())[0])])):
@@ -56,7 +56,6 @@ class table():
                     data_to_write=data_to_write+f"{self.data[key][i]},"
             data_to_write=data_to_write[:-1]+"\n"
         data_to_write=data_to_write[:-1]
-        
         try:
             f=open(file_name,"x")
         except:
@@ -64,8 +63,6 @@ class table():
         finally:
             f.write(data_to_write)
             f.close()
-
-            
     def edit_field_name(self, old_field_name,new_field_name):
         self.data[new_field_name]=self.data.pop(old_field_name)
     def edit_record(self, record_index, field_name, new_value):
@@ -76,7 +73,6 @@ class table():
                 raise IndexError("The entered index is not in the table!")
         else:
             raise KeyError("The entered field is not in the table!")
-
     def del_field(self,field_name):
         if field_name in self.data:
             del self.data[field_name]
@@ -88,7 +84,6 @@ class table():
                 del self.data[key][record_index]
         else:
             raise IndexError("The entered index is not in the table!")
-
     def __str__(self):
         records="{:<8}".format("index ")
         for i in self.data:
