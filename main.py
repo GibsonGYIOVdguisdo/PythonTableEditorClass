@@ -8,7 +8,7 @@ class table():
         data={}
         split=filename.split(".")
         if len(split)==2:
-            if e[1]=="csv":
+            if split[1]=="csv":
                 f=open(filename,"r")
         else:
             f=open("{}.csv".format(filename),"r")
