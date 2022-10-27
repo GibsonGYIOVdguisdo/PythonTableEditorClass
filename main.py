@@ -14,7 +14,6 @@ class table():
             f=open("{}.csv".format(filename),"r")
         lines=f.readlines()
         f.close()
-        found=True
         fields=lines[0].split(",")
         for i in fields:
             i=i.replace("\n","")
