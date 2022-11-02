@@ -7,13 +7,20 @@ class table():
     def from_csv(cls, filename):
         data={}
         split=filename.split(".")
-        if len(split)==2:
-            if split[1]=="csv":
-                f=open(filename,"r")
-        else:
-            f=open("{}.csv".format(filename),"r")
+        if len(filename)==0:
+            raise ValueError("The value inputed is invalid")
+        try:
+            if len(split)==2:
+                if split[1]=="csv":
+                    f=open(filename,"r")
+            else:
+                f=open(f"{filename}.csv","r")
+        except:
+            raise ValueError("The table inputed does not exist")
         lines=f.readlines()
         f.close()
+        if len(lines)==0:
+            raise ValueError("The table inputed has no data")
         fields=lines[0].split(",")
         for i in fields:
             i=i.replace("\n","")
@@ -24,7 +31,7 @@ class table():
             for z,x in zip(data,records):
                 data[z].append(x)
         return cls(data)
-    def add_uid_field(self):
+    def add_uid_field(self): #This is likely to be later removed
         self.data["UID"]=[]
         for i in range(0,len(self.data[str(list(self.data.keys())[0])])):
             self.data["UID"].append(str(i))
