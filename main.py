@@ -79,17 +79,69 @@ class table():
                 raise IndexError("The entered index is not in the table!")
         else:
             raise KeyError("The entered field is not in the table!")
-    def del_field(self,field_name):
-        if field_name in self.data:
-            del self.data[field_name]
+    def del_field(self,*fields):
+        for field in fields:
+            if field in self.data:
+                del self.data[field]
+            else:
+                raise KeyError("The entered field is not in the table!")
+    def del_record(self, *record_indexes):
+        record_indexes=sorted(list(record_indexes))
+        record_indexes=record_indexes[::-1]
+        for record_index in record_indexes:
+            if len(self.data[str(list(self.data.keys())[0])])>=record_index:
+                for key in self.data:
+                    del self.data[key][record_index]
+            else:
+                raise IndexError("The entered index is not in the table!")
+    def set_field_type(self,field,type):
+        type=type.upper()
+        temp_field=self.data[field]
+        self.data[field]=[]
+        for i in temp_field:
+            if type=="BOOL" or type=="BOOLEAN":
+                self.data[field].append(bool(i))
+            elif type == "INT" or type == "INTEGER":
+                self.data[field].append(int(i))
+            elif type == "FLOAT" or type == "REAL":
+                self.data[field].append(float(i))
+            elif type == "STRING" or type == "TEXT":
+                self.data[field].append(str(i))
+    def get_field_type(self,field):
+        return(type(self.data[field][0]))
+    def get_ordered_index(self, field, **kwargs):
+        index={}
+        if "count" not in kwargs.keys():
+            count=len(self.data[field])
         else:
-            raise KeyError("The entered field is not in the table!")
-    def del_record(self, record_index):
-        if len(self.data[str(list(self.data.keys())[0])])>=record_index:
-            for key in self.data:
-                del self.data[key][record_index]
-        else:
-            raise IndexError("The entered index is not in the table!")
+            count=kwargs["count"]
+        for i,v in enumerate(self.data[field]):
+            if v in index.keys():
+                index[v].append(i)
+            else:
+                index[v]=[i]
+        tempfield=sorted(list(set(self.data[field])))
+        indexes=[]
+        if "order" in kwargs.keys():
+            upordown=kwargs["order"].upper()
+            if upordown=="UP" or upordown=="ASCENDING" or upordown=="ASC":
+                tempfield=tempfield[::-1]
+        for i,v in enumerate(tempfield[::-1]):
+            if i>count:
+                break
+            else:
+                indexes+=index[v]
+        return(indexes[:count])
+    def get_records(self,*record_indexes):
+        if type(record_indexes[0])==list:
+            record_indexes=record_indexes[0]
+        records=[]
+        for index in record_indexes:
+            temp_record=[]
+            for i in self.data:
+                temp_record.append(self.data[i][index])
+            records.append(temp_record)
+        return(records)
     def __str__(self):
         records="{:<8}".format("index ")
         for i in self.data:
@@ -107,3 +159,4 @@ class table():
         return(records)
     def __repr__(self):
         return(f"table({str(self.data)})")
+
