@@ -3,7 +3,7 @@ class table():
     def __init__(self, data):
         self.data=data
         table.table_count+=1
-    @classmethod #Alternative constructor
+    @classmethod
     def from_csv(cls, filename):
         data={}
         split=filename.split(".")
@@ -31,6 +31,35 @@ class table():
             for z,x in zip(data,records):
                 data[z].append(x)
         return cls(data)
+    @classmethod
+    def from_json(cls, filename):
+        text={}
+        split=filename.split(".")
+        if len(filename)==0:
+            raise ValueError("The value inputed is invalid")
+        try:
+            if len(split)==2:
+                if split[1]=="json":
+                    file=open(filename,"r")
+            else:
+                file=open(f"{filename}.json","r")
+        except:
+            raise ValueError("The table inputed does not exist")
+        text=file.readline()
+        file.close()
+        return(cls(eval(text)))
+    def save_to_json(self, filename):
+        split=filename.split(".")
+        if len(split)==1:
+            filename=filename+"json"
+        elif len(split)!=2:
+            raise ValueError("The value inputed is invalid")
+        try:
+            file=open(filename,"x")
+        except:
+            file=open(filename,"w")
+        file.write(str(self.data))
+        file.close()
     def add_uid_field(self): #This is likely to be later removed
         self.data["UID"]=[]
         for i in range(0,len(self.data[str(list(self.data.keys())[0])])):
@@ -43,10 +72,10 @@ class table():
         else:
             for key,value in zip(self.data,record):
                 self.data[key].append(value)
-    def add_field(self, field_name):
+    def add_field(self, field_name,placeholder=""):
         self.data[field_name]=[]
         for i in range(0,len(self.data[str(list(self.data.keys())[0])])):
-            self.data[field_name].append("")
+            self.data[field_name].append(placeholder)
 
     def save_to_csv(self, file_name, fill_empty_vals=True):
         data_to_write=""
@@ -63,12 +92,12 @@ class table():
             data_to_write=data_to_write[:-1]+"\n"
         data_to_write=data_to_write[:-1]
         try:
-            f=open(file_name,"x")
+            file=open(file_name,"x")
         except:
-            f=open(file_name,"w")
+            file=open(file_name,"w")
         finally:
-            f.write(data_to_write)
-            f.close()
+            file.write(data_to_write)
+            file.close()
     def edit_field_name(self, old_field_name,new_field_name):
         self.data[new_field_name]=self.data.pop(old_field_name)
     def edit_record(self, record_index, field_name, new_value):
@@ -84,7 +113,7 @@ class table():
             if field in self.data:
                 del self.data[field]
             else:
-                raise KeyError("The entered field is not in the table!")
+                raise KeyError(f"The {field} field is not in the table!")
     def del_record(self, *record_indexes):
         record_indexes=sorted(list(record_indexes))
         record_indexes=record_indexes[::-1]
@@ -93,7 +122,7 @@ class table():
                 for key in self.data:
                     del self.data[key][record_index]
             else:
-                raise IndexError("The entered index is not in the table!")
+                raise IndexError(f"The index {key} is not in the table!")
     def set_field_type(self,field,type):
         type=type.upper()
         temp_field=self.data[field]
@@ -159,4 +188,3 @@ class table():
         return(records)
     def __repr__(self):
         return(f"table({str(self.data)})")
-
