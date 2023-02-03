@@ -140,18 +140,18 @@ class table():
         return(type(self.data[field][0]))
     def get_ordered_index(self, field, **kwargs):
         index={}
-        if "count" not in kwargs.keys():
+        if "count" not in kwargs:
             count=len(self.data[field])
         else:
             count=kwargs["count"]
         for i,v in enumerate(self.data[field]):
-            if v in index.keys():
+            if v in index:
                 index[v].append(i)
             else:
                 index[v]=[i]
         tempfield=sorted(list(set(self.data[field])))
         indexes=[]
-        if "order" in kwargs.keys():
+        if "order" in kwargs:
             upordown=kwargs["order"].upper()
             if upordown=="UP" or upordown=="ASCENDING" or upordown=="ASC":
                 tempfield=tempfield[::-1]
@@ -176,7 +176,7 @@ class table():
         for i in self.data:
             records+="{:<8}".format(f"{i} ")
         records+="\n"
-        for index in range(0,len(self.data[str(list(self.data.keys())[0])])):
+        for index in range(0,len(self.data[str(list(self.data)[0])])):
             records+="{:<8}".format(f"{index} ")
             for key in self.data:
                 if self.data[key][index]=="":
