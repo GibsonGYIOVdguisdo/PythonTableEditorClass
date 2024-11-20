@@ -79,8 +79,10 @@ class table():
 
     def save_to_csv(self, file_name, fill_empty_vals=True):
         data_to_write=""
-        for i in self.data:
-            data_to_write+=f"{i},"
+        for field in self.data:
+            if "," in field:
+                field = f'"{field}"'
+            data_to_write+=f"{field},"
         data_to_write=data_to_write[:-1]+"\n"
         for i in range(0,len(self.data[str(list(self.data.keys())[0])])):
             for key in self.data:
@@ -188,3 +190,4 @@ class table():
         return(records)
     def __repr__(self):
         return(f"table({str(self.data)})")
+    
