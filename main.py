@@ -79,16 +79,21 @@ class table():
 
     def save_to_csv(self, file_name, fill_empty_vals=True):
         data_to_write=""
-        for i in self.data:
-            data_to_write+=f"{i},"
+        for field in self.data:
+            if "," in field:
+                field = f'"{field}"'
+            data_to_write+=f"{field},"
         data_to_write=data_to_write[:-1]+"\n"
         for i in range(0,len(self.data[str(list(self.data.keys())[0])])):
             for key in self.data:
-                if self.data[key][i]=="":
+                record_value = self.data[key][i]
+                if record_value=="":
                     if fill_empty_vals==True:
                         data_to_write=data_to_write+"EmptyVal,"
                 else:
-                    data_to_write=data_to_write+f"{self.data[key][i]},"
+                    if "," in record_value:
+                        record_value = f'"{record_value}"'
+                    data_to_write=data_to_write+f"{record_value},"
             data_to_write=data_to_write[:-1]+"\n"
         data_to_write=data_to_write[:-1]
         try:
@@ -171,24 +176,6 @@ class table():
                 temp_record.append(self.data[i][index])
             records.append(temp_record)
         return(records)
-    def __str__(self):
-        records="{:<8}".format("index ")
-        for i in self.data:
-            records+="{:<8}".format(f"{i} ")
-        records+="\n"
-        for index in range(0,len(self.data[str(list(self.data)[0])])):
-            records+="{:<8}".format(f"{index} ")
-            for key in self.data:
-                if self.data[key][index]=="":
-                    records+="{:<8}".format("\"\"")
-                else:
-                    records+="{:<8}".format(f"{self.data[key][index]} ")
-            records+="\n"
-        records=records[:-1]
-        return(records)
-    def __repr__(self):
-        return(f"table({str(self.data)})")
-    
     @staticmethod
     def __split_csv_line(line):
         if "," not in line:
@@ -224,3 +211,20 @@ class table():
 
             currentSegment += firstChar
         return splitLine
+    def __str__(self):
+        records="{:<8}".format("index ")
+        for i in self.data:
+            records+="{:<8}".format(f"{i} ")
+        records+="\n"
+        for index in range(0,len(self.data[str(list(self.data)[0])])):
+            records+="{:<8}".format(f"{index} ")
+            for key in self.data:
+                if self.data[key][index]=="":
+                    records+="{:<8}".format("\"\"")
+                else:
+                    records+="{:<8}".format(f"{self.data[key][index]} ")
+            records+="\n"
+        records=records[:-1]
+        return(records)
+    def __repr__(self):
+        return(f"table({str(self.data)})")
