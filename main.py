@@ -1,8 +1,8 @@
-class table():
+class Table():
     table_count=0
     def __init__(self, data):
         self.data=data
-        table.table_count+=1
+        Table.table_count+=1
     @classmethod
     def from_csv(cls, filename):
         data={}
