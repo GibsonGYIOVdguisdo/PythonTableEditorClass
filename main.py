@@ -21,13 +21,13 @@ class table():
         f.close()
         if len(lines)==0:
             raise ValueError("The table inputed has no data")
-        fields=lines[0].split(",")
+        fields=table.__split_csv_line(lines[0])
         for i in fields:
             i=i.replace("\n","")
             data[i]=[]
         for i in lines[1:]:
             i=i.replace("\n","")
-            records=i.split(",")
+            records=table.__split_csv_line(i)
             for z,x in zip(data,records):
                 data[z].append(x)
         return cls(data)
@@ -176,6 +176,41 @@ class table():
                 temp_record.append(self.data[i][index])
             records.append(temp_record)
         return(records)
+    @staticmethod
+    def __split_csv_line(line):
+        if "," not in line:
+            return line
+        if len(line) < 3:
+            return line.split(",")
+        unexpectedCharacters = False
+        skipChar = False
+        splitLine = []
+        currentSegment = ""
+        for i in range(len(line[:-1])):
+            if skipChar == True:
+                skipChar = False
+                continue
+            firstChar = line[i]
+            nextChar = line[i+1]
+            if firstChar == "," and unexpectedCharacters == False:
+                splitLine.append(currentSegment)
+                currentSegment = ""
+                if nextChar == '"':
+                    unexpectedCharacters = True
+                    skipChar = True
+                continue
+
+            if firstChar == '"':
+                if nextChar == '"':
+                    skipChar = True
+                    currentSegment += firstChar
+                    continue
+                elif nextChar == ",":
+                    unexpectedCharacters = False
+                    continue
+
+            currentSegment += firstChar
+        return splitLine
     def __str__(self):
         records="{:<8}".format("index ")
         for i in self.data:
@@ -193,7 +228,3 @@ class table():
         return(records)
     def __repr__(self):
         return(f"table({str(self.data)})")
-    
-cars = table.from_csv("cars.csv")
-cars.edit_record(1, "Car", "bav,ria")
-cars.save_to_csv("new_cars.csv")
