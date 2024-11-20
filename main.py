@@ -188,3 +188,39 @@ class table():
         return(records)
     def __repr__(self):
         return(f"table({str(self.data)})")
+    
+    @staticmethod
+    def __split_csv_line(self, line):
+        if "," not in line:
+            return line
+        if len(line) < 3:
+            return line.split(",")
+        unexpectedCharacters = False
+        skipChar = False
+        splitLine = []
+        currentSegment = ""
+        for i in range(len(line[:-1])):
+            if skipChar == True:
+                skipChar = False
+                continue
+            firstChar = line[i]
+            nextChar = line[i+1]
+            if firstChar == "," and unexpectedCharacters == False:
+                splitLine.append(currentSegment)
+                currentSegment = ""
+                if nextChar == '"':
+                    unexpectedCharacters = True
+                    skipChar = True
+                continue
+
+            if firstChar == '"':
+                if nextChar == '"':
+                    skipChar = True
+                    currentSegment += firstChar
+                    continue
+                elif nextChar == ",":
+                    unexpectedCharacters = False
+                    continue
+
+            currentSegment += firstChar
+        return splitLine
