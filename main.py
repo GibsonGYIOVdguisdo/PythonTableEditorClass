@@ -79,16 +79,21 @@ class table():
 
     def save_to_csv(self, file_name, fill_empty_vals=True):
         data_to_write=""
-        for i in self.data:
-            data_to_write+=f"{i},"
+        for field in self.data:
+            if "," in field:
+                field = f'"{field}"'
+            data_to_write+=f"{field},"
         data_to_write=data_to_write[:-1]+"\n"
         for i in range(0,len(self.data[str(list(self.data.keys())[0])])):
             for key in self.data:
-                if self.data[key][i]=="":
+                record_value = self.data[key][i]
+                if record_value=="":
                     if fill_empty_vals==True:
                         data_to_write=data_to_write+"EmptyVal,"
                 else:
-                    data_to_write=data_to_write+f"{self.data[key][i]},"
+                    if "," in record_value:
+                        record_value = f'"{record_value}"'
+                    data_to_write=data_to_write+f"{record_value},"
             data_to_write=data_to_write[:-1]+"\n"
         data_to_write=data_to_write[:-1]
         try:
@@ -188,3 +193,7 @@ class table():
         return(records)
     def __repr__(self):
         return(f"table({str(self.data)})")
+    
+cars = table.from_csv("cars.csv")
+cars.edit_record(1, "Car", "bav,ria")
+cars.save_to_csv("new_cars.csv")
