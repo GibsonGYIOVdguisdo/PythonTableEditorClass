@@ -215,6 +215,8 @@ class Table():
                     continue
 
             currentSegment += firstChar
+        if skipChar == False:
+            currentSegment = f"{currentSegment}{line[-1]}"
         splitLine.append(currentSegment)
         return splitLine
     def __str__(self):
