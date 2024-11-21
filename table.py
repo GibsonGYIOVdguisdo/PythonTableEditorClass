@@ -21,13 +21,13 @@ class Table():
         f.close()
         if len(lines)==0:
             raise ValueError("The table inputed has no data")
-        fields=table.__split_csv_line(lines[0])
+        fields=Table.__split_csv_line(lines[0])
         for i in fields:
             i=i.replace("\n","")
             data[i]=[]
         for i in lines[1:]:
             i=i.replace("\n","")
-            records=table.__split_csv_line(i)
+            records=Table.__split_csv_line(i)
             for z,x in zip(data,records):
                 data[z].append(x)
         return cls(data)
