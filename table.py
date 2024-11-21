@@ -183,6 +183,7 @@ class Table():
         if len(line) < 3:
             return line.split(",")
         unexpectedCharacters = False
+        removeWhiteSpace = True
         skipChar = False
         splitLine = []
         currentSegment = ""
@@ -193,7 +194,10 @@ class Table():
             firstChar = line[i]
             nextChar = line[i+1]
             if firstChar == "," and unexpectedCharacters == False:
+                if removeWhiteSpace == True:
+                    currentSegment = currentSegment.strip()
                 splitLine.append(currentSegment)
+                removeWhiteSpace = True
                 currentSegment = ""
                 if nextChar == '"':
                     unexpectedCharacters = True
@@ -206,6 +210,7 @@ class Table():
                     currentSegment += firstChar
                     continue
                 elif nextChar == ",":
+                    removeWhiteSpace = False
                     unexpectedCharacters = False
                     continue
 
