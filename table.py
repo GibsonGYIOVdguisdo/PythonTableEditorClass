@@ -210,6 +210,7 @@ class Table():
                     continue
 
             currentSegment += firstChar
+        splitLine.append(currentSegment)
         return splitLine
     def __str__(self):
         records="{:<8}".format("index ")
