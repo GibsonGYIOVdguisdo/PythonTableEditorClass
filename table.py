@@ -174,6 +174,8 @@ class Table():
         file.close()
     @staticmethod
     def __get_file_name(file_name, file_extension):
+        if file_name == "":
+            raise ValueError("The filename is invalid")
         if file_name[len(file_name) - len(file_extension):].lower() != file_extension.lower():
             file_name=f"{file_name}.{file_extension}"
         return file_name
