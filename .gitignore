@@ -1,4 +1,5 @@
 main.py
+tests/test_save.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
