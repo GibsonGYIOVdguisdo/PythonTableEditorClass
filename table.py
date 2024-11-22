@@ -6,21 +6,15 @@ class Table():
     @classmethod
     def from_csv(cls, filename):
         data={}
-        split=filename.split(".")
-        if len(filename)==0:
-            raise ValueError("The value inputed is invalid")
+        filename = Table.__get_file_name(filename, "csv")
         try:
-            if len(split)==2:
-                if split[1]=="csv":
-                    f=open(filename,"r")
-            else:
-                f=open(f"{filename}.csv","r")
+            f=open(filename,"r")
         except:
-            raise ValueError("The table inputed does not exist")
+            raise ValueError("File does not exist")
         lines=f.readlines()
         f.close()
         if len(lines)==0:
-            raise ValueError("The table inputed has no data")
+            raise ValueError("File is empty")
         fields=Table.__split_csv_line(lines[0])
         for i in fields:
             i=i.replace("\n","")
@@ -34,17 +28,11 @@ class Table():
     @classmethod
     def from_json(cls, filename):
         text={}
-        split=filename.split(".")
-        if len(filename)==0:
-            raise ValueError("The value inputed is invalid")
+        filename = Table.__get_file_name(filename, "json")
         try:
-            if len(split)==2:
-                if split[1]=="json":
-                    file=open(filename,"r")
-            else:
-                file=open(f"{filename}.json","r")
+            file=open(f"{filename}","r")
         except:
-            raise ValueError("The table inputed does not exist")
+            raise ValueError("The file does not exist")
         text=file.readline()
         file.close()
         return(cls(eval(text)))
