@@ -80,7 +80,8 @@ class Table():
     def save_to_csv(self, file_name, fill_empty_vals=True):
         data_to_write=""
         for field in self.data:
-            if "," in field:
+            if "," in field or '"' in field:
+                field.replace('"', '""')
                 field = f'"{field}"'
             data_to_write+=f"{field},"
         data_to_write=data_to_write[:-1]+"\n"
@@ -91,7 +92,8 @@ class Table():
                     if fill_empty_vals==True:
                         data_to_write=data_to_write+"EmptyVal,"
                 else:
-                    if "," in record_value:
+                    if "," in record_value or '"' in record_value:
+                        record_value.replace('"', '""')
                         record_value = f'"{record_value}"'
                     data_to_write=data_to_write+f"{record_value},"
             data_to_write=data_to_write[:-1]+"\n"
