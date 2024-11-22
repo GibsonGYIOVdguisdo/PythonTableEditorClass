@@ -56,7 +56,7 @@ class Table():
         for i in range(0,len(self.data[str(list(self.data.keys())[0])])):
             self.data[field_name].append(placeholder)
 
-    def save_to_csv(self, file_name, fill_empty_vals=True):
+    def save_to_csv(self, file_name, fill_empty_vals=False):
         data_to_write=""
         for field in self.data:
             if "," in field or '"' in field:
