@@ -181,43 +181,43 @@ class Table():
             return line
         if len(line) < 3:
             return line.split(",")
-        unexpectedCharacters = False
-        removeWhiteSpace = True
-        skipChar = False
-        splitLine = []
-        currentSegment = ""
+        unexpected_characters = False
+        remove_whitespace = True
+        skip_char = False
+        split_line = []
+        current_segment = ""
         for i in range(len(line[:-1])):
-            if skipChar == True:
-                skipChar = False
+            if skip_char == True:
+                skip_char = False
                 continue
-            firstChar = line[i]
-            nextChar = line[i+1]
-            if firstChar == "," and unexpectedCharacters == False:
-                if removeWhiteSpace == True:
-                    currentSegment = currentSegment.strip()
-                splitLine.append(currentSegment)
-                removeWhiteSpace = True
-                currentSegment = ""
-                if nextChar == '"':
-                    unexpectedCharacters = True
-                    skipChar = True
+            first_char = line[i]
+            next_char = line[i+1]
+            if first_char == "," and unexpected_characters == False:
+                if remove_whitespace == True:
+                    current_segment = current_segment.strip()
+                split_line.append(current_segment)
+                remove_whitespace = True
+                current_segment = ""
+                if next_char == '"':
+                    unexpected_characters = True
+                    skip_char = True
                 continue
 
-            if firstChar == '"':
-                if nextChar == '"':
-                    skipChar = True
-                    currentSegment += firstChar
+            if first_char == '"':
+                if next_char == '"':
+                    skip_char = True
+                    current_segment += first_char
                     continue
-                elif nextChar == ",":
-                    removeWhiteSpace = False
-                    unexpectedCharacters = False
+                elif next_char == ",":
+                    remove_whitespace = False
+                    unexpected_characters = False
                     continue
 
-            currentSegment += firstChar
-        if skipChar == False:
-            currentSegment = f"{currentSegment}{line[-1]}"
-        splitLine.append(currentSegment)
-        return splitLine
+            current_segment += first_char
+        if skip_char == False:
+            current_segment = f"{current_segment}{line[-1]}"
+        split_line.append(current_segment)
+        return split_line
     def __str__(self):
         records="{:<8}".format("index ")
         for i in self.data:
