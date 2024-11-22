@@ -48,18 +48,8 @@ class Table():
         text=file.readline()
         file.close()
         return(cls(eval(text)))
-    def save_to_json(self, filename):
-        split=filename.split(".")
-        if len(split)==1:
-            filename=filename+"json"
-        elif len(split)!=2:
-            raise ValueError("The value inputed is invalid")
-        try:
-            file=open(filename,"x")
-        except:
-            file=open(filename,"w")
-        file.write(str(self.data))
-        file.close()
+    def save_to_json(self, file_name):
+        Table.__write_to_file(file_name, "json", str(self.data))
     def add_uid_field(self): #This is likely to be later removed
         self.data["UID"]=[]
         for i in range(0,len(self.data[str(list(self.data.keys())[0])])):
@@ -98,13 +88,7 @@ class Table():
                     data_to_write=data_to_write+f"{record_value},"
             data_to_write=data_to_write[:-1]+"\n"
         data_to_write=data_to_write[:-1]
-        try:
-            file=open(file_name,"x")
-        except:
-            file=open(file_name,"w")
-        finally:
-            file.write(data_to_write)
-            file.close()
+        Table.__write_to_file(file_name, "csv", data_to_write)
     def edit_field_name(self, old_field_name,new_field_name):
         self.data[new_field_name]=self.data.pop(old_field_name)
     def edit_record(self, record_index, field_name, new_value):
@@ -178,6 +162,19 @@ class Table():
                 temp_record.append(self.data[i][index])
             records.append(temp_record)
         return(records)
+    @staticmethod
+    def __write_to_file(file_name, file_extension, data_to_write):
+        split_file_name=file_name.split(".")
+        if len(split_file_name)==1:
+            file_name=f"{file_name}.{file_extension}"
+        elif len(split_file_name)!=2:
+            raise ValueError("The filename is invalid")
+        try:
+            file=open(file_name,"x")
+        except:
+            file=open(file_name,"w")
+        file.write(data_to_write)
+        file.close()
     @staticmethod
     def __split_csv_line(line):
         if "," not in line:
